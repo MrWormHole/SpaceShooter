@@ -6,7 +6,7 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-const WIDTH, HEIGHT = 600, 800
+const SCREEN_WIDTH, SCREEN_HEIGHT = 600, 800
 
 func quitAfterDelay() {
 	sdl.Delay(3000)
@@ -24,8 +24,8 @@ func main() {
 	window, err := sdl.CreateWindow("Space Shooter",
 		sdl.WINDOWPOS_UNDEFINED,
 		sdl.WINDOWPOS_UNDEFINED,
-		WIDTH,
-		HEIGHT,
+		SCREEN_WIDTH,
+		SCREEN_HEIGHT,
 		sdl.WINDOW_OPENGL)
 	if err != nil {
 		fmt.Println("Window Initialization Error! ", err)
@@ -45,7 +45,7 @@ func main() {
 	var enemies []enemy
 	for i := 0; i < 5; i++ {
 		for j := 0; j < 3; j++ {
-			x := float64(i)/5*WIDTH + 10
+			x := float64(i)/5*SCREEN_WIDTH + 10
 			y := float64(j)*100 + 10
 
 			enemy := createEnemy(renderer, x, y)
@@ -55,6 +55,8 @@ func main() {
 	}
 
 	player := createPlayer(renderer)
+
+	createProjectiles(renderer)
 
 	for {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
@@ -66,11 +68,18 @@ func main() {
 		renderer.SetDrawColor(255, 255, 255, 255)
 		renderer.Clear()
 
-		player.update()
 		player.draw(renderer)
+		player.update()
 
 		for _, enemy := range enemies {
 			enemy.draw(renderer)
+		}
+
+		for _, projectile := range projectiles {
+			if projectile != nil {
+				projectile.draw(renderer)
+				projectile.update()
+			}
 		}
 
 		renderer.Present()
