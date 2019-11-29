@@ -42,6 +42,18 @@ func main() {
 	}
 	defer renderer.Destroy()
 
+	var enemies []enemy
+	for i := 0; i < 5; i++ {
+		for j := 0; j < 3; j++ {
+			x := float64(i)/5*WIDTH + 10
+			y := float64(j)*100 + 10
+
+			enemy := createEnemy(renderer, x, y)
+
+			enemies = append(enemies, enemy)
+		}
+	}
+
 	player := createPlayer(renderer)
 
 	for {
@@ -54,7 +66,12 @@ func main() {
 		renderer.SetDrawColor(255, 255, 255, 255)
 		renderer.Clear()
 
+		player.update()
 		player.draw(renderer)
+
+		for _, enemy := range enemies {
+			enemy.draw(renderer)
+		}
 
 		renderer.Present()
 	}
