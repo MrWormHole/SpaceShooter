@@ -28,18 +28,21 @@ func createSpriteRenderer(toAttached *entity, renderer *sdl.Renderer, filename s
 		height:         height}
 }
 
-func (sR *spriteRenderer) onDraw(renderer *sdl.Renderer) error {
+func (spriteRenderer *spriteRenderer) onDraw(renderer *sdl.Renderer) error {
 
-	renderer.CopyEx(sR.texture,
-		&sdl.Rect{X: 0, Y: 0, W: sR.width, H: sR.height},
-		&sdl.Rect{X: int32(sR.attachedEntity.position.x), Y: int32(sR.attachedEntity.position.y), W: sR.width, H: sR.height},
-		sR.attachedEntity.rotation,
-		&sdl.Point{X: int32(sR.width / 2.0), Y: int32(sR.height / 2.0)},
+	renderer.CopyEx(spriteRenderer.texture,
+		&sdl.Rect{X: 0, Y: 0, W: spriteRenderer.width, H: spriteRenderer.height},
+		&sdl.Rect{X: int32(spriteRenderer.attachedEntity.position.x),
+			Y: int32(spriteRenderer.attachedEntity.position.y),
+			W: spriteRenderer.width,
+			H: spriteRenderer.height},
+		0,
+		&sdl.Point{X: int32(spriteRenderer.width / 2.0), Y: int32(spriteRenderer.height / 2.0)},
 		sdl.FLIP_NONE)
 
 	return nil
 }
 
-func (sR *spriteRenderer) onUpdate() error {
+func (spriteRenderer *spriteRenderer) onUpdate() error {
 	return nil
 }

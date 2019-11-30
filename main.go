@@ -42,19 +42,18 @@ func main() {
 	}
 	defer renderer.Destroy()
 
-	var enemies []enemy
 	for i := 0; i < 5; i++ {
 		for j := 0; j < 3; j++ {
 			x := float64(i)/5*SCREEN_WIDTH + 10
 			y := float64(j)*100 + 10
 
-			enemy := createEnemy(renderer, x, y)
+			enemy := createEnemy(renderer, vector2{x, y})
 
-			enemies = append(enemies, enemy)
+			entities = append(entities, enemy)
 		}
 	}
 
-	player := createPlayer(renderer)
+	entities = append(entities, createPlayer(renderer))
 
 	createProjectiles(renderer)
 
@@ -68,27 +67,20 @@ func main() {
 		renderer.SetDrawColor(255, 255, 255, 255)
 		renderer.Clear()
 
-		err = player.draw(renderer)
-		if err != nil {
-			fmt.Println("Player Drawing Error! ", err)
-			quitAfterDelay()
-			return
-		}
-		err = player.update()
-		if err != nil {
-			fmt.Println("Player Updating Error! ", err)
-			quitAfterDelay()
-			return
-		}
-
-		for _, enemy := range enemies {
-			enemy.draw(renderer)
-		}
-
-		for _, projectile := range projectiles {
-			if projectile != nil {
-				projectile.draw(renderer)
-				projectile.update()
+		for _, entity := range entities {
+			if entity.active {
+				err = entity.draw(renderer)
+				if err != nil {
+					fmt.Println("Entity Drawing Error! ", err)
+					quitAfterDelay()
+					return
+				}
+				err = entity.update()
+				if err != nil {
+					fmt.Println("Enemy Updating Error! ", err)
+					quitAfterDelay()
+					return
+				}
 			}
 		}
 

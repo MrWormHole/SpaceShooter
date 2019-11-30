@@ -21,10 +21,10 @@ func createPlayer(renderer *sdl.Renderer) *entity {
 	spriteRendererComponent := createSpriteRenderer(player, renderer, "player.png")
 	player.addComponent(spriteRendererComponent)
 
-	inputControllerComponent := createInputController(player, 0.25)
+	inputControllerComponent := createInputController(player, playerSpeed)
 	player.addComponent(inputControllerComponent)
 
-	timeTriggerComponent := createTimeTrigger(player, time.Millisecond*250)
+	timeTriggerComponent := createTimeTrigger(player, playerShootCooldown)
 	player.addComponent(timeTriggerComponent)
 
 	return player

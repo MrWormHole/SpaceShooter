@@ -8,27 +8,27 @@ type inputController struct {
 	attachedEntity *entity
 	speed          float64
 
-	sR *spriteRenderer
+	renderer *spriteRenderer
 }
 
 func createInputController(toAttached *entity, speed float64) *inputController {
 	return &inputController{
 		attachedEntity: toAttached,
 		speed:          speed,
-		sR:             toAttached.getComponent(&spriteRenderer{}).(*spriteRenderer)}
+		renderer:       toAttached.getComponent(&spriteRenderer{}).(*spriteRenderer)}
 }
 
-func (iC *inputController) onDraw(renderer *sdl.Renderer) error {
+func (controller *inputController) onDraw(renderer *sdl.Renderer) error {
 	return nil
 }
 
-func (iC *inputController) onUpdate() error {
+func (controller *inputController) onUpdate() error {
 	keys := sdl.GetKeyboardState()
 
-	if keys[sdl.SCANCODE_LEFT] == 1 && iC.attachedEntity.position.x > 0 {
-		iC.attachedEntity.position.x -= iC.speed
-	} else if keys[sdl.SCANCODE_RIGHT] == 1 && iC.attachedEntity.position.x+float64(iC.sR.width) < SCREEN_WIDTH {
-		iC.attachedEntity.position.x += iC.speed
+	if keys[sdl.SCANCODE_LEFT] == 1 && controller.attachedEntity.position.x > 0 {
+		controller.attachedEntity.position.x -= controller.speed
+	} else if keys[sdl.SCANCODE_RIGHT] == 1 && controller.attachedEntity.position.x+float64(controller.renderer.width) < SCREEN_WIDTH {
+		controller.attachedEntity.position.x += controller.speed
 	}
 
 	return nil

@@ -76,3 +76,5 @@ func (e *entity) getComponent(withType component) component {
 		`,
 		reflect.TypeOf(withType)))
 }
+
+var entities []*entity

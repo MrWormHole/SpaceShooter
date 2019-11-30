@@ -12,14 +12,14 @@ type timeTrigger struct {
 	cooldown       time.Duration
 	lastTriggered  time.Time
 
-	sR *spriteRenderer
+	renderer *spriteRenderer
 }
 
 func createTimeTrigger(toAttached *entity, cooldown time.Duration) *timeTrigger {
 	return &timeTrigger{
 		attachedEntity: toAttached,
 		cooldown:       cooldown,
-		sR:             toAttached.getComponent(&spriteRenderer{}).(*spriteRenderer)}
+		renderer:       toAttached.getComponent(&spriteRenderer{}).(*spriteRenderer)}
 }
 
 func (trigger *timeTrigger) onUpdate() error {
@@ -29,7 +29,7 @@ func (trigger *timeTrigger) onUpdate() error {
 
 	if keys[sdl.SCANCODE_SPACE] == 1 {
 		if time.Since(trigger.lastTriggered) >= trigger.cooldown {
-			trigger.action(spawnPosition.x+float64(trigger.sR.width/2-4), spawnPosition.y)
+			trigger.action(spawnPosition.x+float64(trigger.renderer.width/2-4), spawnPosition.y)
 		}
 	}
 
@@ -41,12 +41,12 @@ func (trigger *timeTrigger) onDraw(renderer *sdl.Renderer) error {
 }
 
 func (trigger *timeTrigger) action(x float64, y float64) {
-	proj, status := projectileFromProjectiles()
+	proj, status := projectileFromProjectilesPool()
 	if status {
 		proj.active = true
-		proj.x = x
-		proj.y = y - 75
-		proj.angle = 3 * math.Pi / 2
+		proj.position.x = x
+		proj.position.y = y - 75
+		proj.rotation = 3 * math.Pi / 2
 
 		trigger.lastTriggered = time.Now()
 	}
