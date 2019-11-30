@@ -1,7 +1,6 @@
 package main
 
 import (
-	"math"
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -10,50 +9,23 @@ import (
 const playerPixelWidth, playerPixelHeight = 112, 75
 const playerSpeed, playerShootCooldown = 0.25, time.Millisecond * 250
 
-type player struct {
-	tex  *sdl.Texture
-	x, y float64
+func createPlayer(renderer *sdl.Renderer) *entity {
+	player := createEntity()
 
-	lastShootTime time.Time
-}
+	player.position = vector2{
+		x: SCREEN_WIDTH/2.0 - playerPixelWidth/2,
+		y: SCREEN_HEIGHT - playerPixelHeight - 25}
 
-func createPlayer(renderer *sdl.Renderer) (p player) {
-	p.tex = textureFromPNG(renderer, "player.png")
-	p.x, p.y = SCREEN_WIDTH/2.0-playerPixelWidth/2, SCREEN_HEIGHT-playerPixelHeight-25
+	player.active = true
 
-	return p
-}
+	spriteRendererComponent := createSpriteRenderer(player, renderer, "player.png")
+	player.addComponent(spriteRendererComponent)
 
-func (p *player) draw(renderer *sdl.Renderer) {
-	renderer.Copy(p.tex,
-		&sdl.Rect{X: 0, Y: 0, W: playerPixelWidth, H: playerPixelHeight},
-		&sdl.Rect{X: int32(p.x), Y: int32(p.y), W: playerPixelWidth, H: playerPixelHeight})
-}
+	inputControllerComponent := createInputController(player, 0.25)
+	player.addComponent(inputControllerComponent)
 
-func (p *player) update() {
-	keys := sdl.GetKeyboardState()
+	timeTriggerComponent := createTimeTrigger(player, time.Millisecond*250)
+	player.addComponent(timeTriggerComponent)
 
-	if keys[sdl.SCANCODE_LEFT] == 1 && p.x > 0 {
-		p.x -= playerSpeed
-	} else if keys[sdl.SCANCODE_RIGHT] == 1 && p.x+playerPixelWidth < SCREEN_WIDTH {
-		p.x += playerSpeed
-	}
-
-	if keys[sdl.SCANCODE_SPACE] == 1 {
-		if time.Since(p.lastShootTime) >= playerShootCooldown {
-			p.shoot()
-		}
-	}
-}
-
-func (p *player) shoot() {
-	proj, status := projectileFromProjectiles()
-	if status {
-		proj.active = true
-		proj.x = p.x + playerPixelWidth/2 - projectilePixelWidth/2
-		proj.y = p.y - 75
-		proj.angle = math.Pi * 3 / 2
-
-		p.lastShootTime = time.Now()
-	}
+	return player
 }

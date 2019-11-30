@@ -68,8 +68,18 @@ func main() {
 		renderer.SetDrawColor(255, 255, 255, 255)
 		renderer.Clear()
 
-		player.draw(renderer)
-		player.update()
+		err = player.draw(renderer)
+		if err != nil {
+			fmt.Println("Player Drawing Error! ", err)
+			quitAfterDelay()
+			return
+		}
+		err = player.update()
+		if err != nil {
+			fmt.Println("Player Updating Error! ", err)
+			quitAfterDelay()
+			return
+		}
 
 		for _, enemy := range enemies {
 			enemy.draw(renderer)

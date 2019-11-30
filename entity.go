@@ -23,6 +23,32 @@ type entity struct {
 	components []component
 }
 
+func createEntity() *entity {
+	return &entity{}
+}
+
+func (e *entity) draw(renderer *sdl.Renderer) error {
+	for _, component := range e.components {
+		err := component.onDraw(renderer)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (e *entity) update() error {
+	for _, component := range e.components {
+		err := component.onUpdate()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (e *entity) addComponent(new component) {
 	for _, existingComponent := range e.components {
 		if reflect.TypeOf(new) == reflect.TypeOf(existingComponent) {
