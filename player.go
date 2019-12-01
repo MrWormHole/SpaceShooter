@@ -27,5 +27,8 @@ func createPlayer(renderer *sdl.Renderer) *entity {
 	timeTriggerComponent := createTimeTrigger(player, playerShootCooldown)
 	player.addComponent(timeTriggerComponent)
 
+	circleColliderComponent := createCircleCollider(player, player.position, 50)
+	player.addComponent(circleColliderComponent)
+
 	return player
 }

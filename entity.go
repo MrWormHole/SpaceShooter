@@ -77,4 +77,14 @@ func (e *entity) getComponent(withType component) component {
 		reflect.TypeOf(withType)))
 }
 
+func (e *entity) hasComponent(c component) bool {
+	desiredType := reflect.TypeOf(c)
+	for _, existingComponent := range e.components {
+		if reflect.TypeOf(existingComponent) == desiredType {
+			return true
+		}
+	}
+	return false
+}
+
 var entities []*entity
