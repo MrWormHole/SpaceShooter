@@ -26,9 +26,9 @@ func (controller *inputController) onUpdate() error {
 	keys := sdl.GetKeyboardState()
 
 	if keys[sdl.SCANCODE_LEFT] == 1 && controller.attachedEntity.position.x > 0 {
-		controller.attachedEntity.position.x -= controller.speed
+		controller.attachedEntity.position.x -= controller.speed * delta
 	} else if keys[sdl.SCANCODE_RIGHT] == 1 && controller.attachedEntity.position.x+float64(controller.renderer.width) < SCREEN_WIDTH {
-		controller.attachedEntity.position.x += controller.speed
+		controller.attachedEntity.position.x += controller.speed * delta
 	}
 
 	return nil

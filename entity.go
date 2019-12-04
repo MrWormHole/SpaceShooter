@@ -20,11 +20,12 @@ type entity struct {
 	position   vector2
 	rotation   float64
 	active     bool
+	tag        string
 	components []component
 }
 
-func createEntity() *entity {
-	return &entity{}
+func createEntity(tag string) *entity {
+	return &entity{tag: tag}
 }
 
 func (e *entity) draw(renderer *sdl.Renderer) error {

@@ -6,6 +6,8 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+const colliderDebug bool = true
+
 type circleCollider struct {
 	attachedEntity *entity
 	center         vector2
@@ -35,7 +37,6 @@ func (collider *circleCollider) followEntity() {
 func (collider *circleCollider) onUpdate() error {
 	collider.followEntity()
 
-	//fix collision detection bug(tagging could be very useful in entity)
 	for _, otherEntity := range entities {
 		if otherEntity == collider.attachedEntity {
 			continue //don't collide with your own self
@@ -43,9 +44,15 @@ func (collider *circleCollider) onUpdate() error {
 
 		if otherEntity.active && otherEntity.hasComponent(&circleCollider{}) {
 			if collider.collides(otherEntity.getComponent(&circleCollider{}).(*circleCollider)) {
-				collider.attachedEntity.active = false
-				otherEntity.active = false
-				//think about other layer-mask solutions which requires tag on entities
+				// Layer-Mask Collision table has written down
+				// 		play proj enem
+				// play  -    +    -
+				// proj  +    -    +
+				// enem  -    +    -
+				if collider.attachedEntity.tag == "projectile" && (otherEntity.tag == "player" || otherEntity.tag == "enemy") {
+					collider.attachedEntity.active = false
+					otherEntity.active = false
+				}
 			}
 		}
 	}
@@ -54,9 +61,12 @@ func (collider *circleCollider) onUpdate() error {
 }
 
 func (collider *circleCollider) onDraw(renderer *sdl.Renderer) error {
-	collider.illusturateCircleCollider(renderer)
+	if !colliderDebug {
+		return nil
+	}
+	collider.illusturateCircleCollider(renderer) // this will be useful for debugging circle shape later
 
-	return nil // this will be useful for debugging circle shape later
+	return nil
 }
 
 func (collider *circleCollider) illusturateCircleCollider(renderer *sdl.Renderer) {

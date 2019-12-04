@@ -2,16 +2,20 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
 
 const SCREEN_WIDTH, SCREEN_HEIGHT = 600, 800
+const TARGET_FPS = 60
 
 func quitAfterDelay() {
 	sdl.Delay(3000)
 	sdl.Quit()
 }
+
+var delta float64
 
 func main() {
 
@@ -58,6 +62,8 @@ func main() {
 	createProjectiles(renderer)
 
 	for {
+		frameStartTime := time.Now()
+
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
 			case *sdl.QuitEvent:
@@ -83,7 +89,7 @@ func main() {
 				}
 			}
 		}
-
+		delta = time.Since(frameStartTime).Seconds() * TARGET_FPS
 		renderer.Present()
 	}
 }

@@ -7,10 +7,10 @@ import (
 )
 
 const playerPixelWidth, playerPixelHeight = 112, 75
-const playerSpeed, playerShootCooldown = 0.25, time.Millisecond * 250
+const playerSpeed, playerShootCooldown = 5, time.Millisecond * 250
 
 func createPlayer(renderer *sdl.Renderer) *entity {
-	player := createEntity()
+	player := createEntity("player")
 
 	player.position = vector2{
 		x: SCREEN_WIDTH/2.0 - playerPixelWidth/2,

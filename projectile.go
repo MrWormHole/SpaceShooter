@@ -5,10 +5,10 @@ import (
 )
 
 const projectilePixelWidth, projectilePixelHeight = 9, 57
-const projectileSpeed = 0.5
+const projectileSpeed = 10
 
 func createProjectile(renderer *sdl.Renderer) *entity {
-	projectile := createEntity()
+	projectile := createEntity("projectile")
 
 	spriteRendererComponent := createSpriteRenderer(projectile, renderer, "projectile.png")
 	projectile.addComponent(spriteRendererComponent)
@@ -17,6 +17,9 @@ func createProjectile(renderer *sdl.Renderer) *entity {
 	projectile.addComponent(projectileControllerComponent)
 
 	projectile.active = false
+
+	circleColliderComponent := createCircleCollider(projectile, projectile.position, 10)
+	projectile.addComponent(circleColliderComponent)
 
 	return projectile
 }
