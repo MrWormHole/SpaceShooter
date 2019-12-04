@@ -49,7 +49,16 @@ func (collider *circleCollider) onUpdate() error {
 				// play  -    +    -
 				// proj  +    -    +
 				// enem  -    +    -
-				if collider.attachedEntity.tag == "projectile" && (otherEntity.tag == "player" || otherEntity.tag == "enemy") {
+				// enemyProjectile can kill player only, playerProjectile can kill enemy only
+				if collider.attachedEntity.tag == "enemyProjectile" && otherEntity.tag == "playerProjectile" {
+					collider.attachedEntity.active = false
+					otherEntity.active = false
+				}
+				if collider.attachedEntity.tag == "enemyProjectile" && otherEntity.tag == "player" {
+					collider.attachedEntity.active = false
+					otherEntity.active = false
+				}
+				if collider.attachedEntity.tag == "playerProjectile" && otherEntity.tag == "enemy" {
 					collider.attachedEntity.active = false
 					otherEntity.active = false
 				}

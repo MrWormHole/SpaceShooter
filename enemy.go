@@ -7,7 +7,7 @@ import (
 )
 
 const enemyPixelWidth, enemyPixelHeight = 103, 84
-const enemySpeed, enemyRoamCooldown = 3, time.Millisecond * 750
+const enemySpeed, enemyRoamCooldown, enemyShootCooldown = 3, time.Millisecond * 750, time.Millisecond * 2000
 
 type enemy struct {
 	tex  *sdl.Texture
@@ -28,6 +28,9 @@ func createEnemy(renderer *sdl.Renderer, position vector2) *entity {
 
 	aiControllerComponent := createAIController(enemy, enemySpeed, enemyRoamCooldown)
 	enemy.addComponent(aiControllerComponent)
+
+	timeTriggerComponent := createTimeTrigger(enemy, enemyShootCooldown)
+	enemy.addComponent(timeTriggerComponent)
 
 	return enemy
 }
