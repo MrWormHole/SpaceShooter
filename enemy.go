@@ -1,11 +1,13 @@
 package main
 
 import (
+	"time"
+
 	"github.com/veandco/go-sdl2/sdl"
 )
 
 const enemyPixelWidth, enemyPixelHeight = 103, 84
-const enemySpeed = 3
+const enemySpeed, enemyRoamCooldown = 3, time.Millisecond * 750
 
 type enemy struct {
 	tex  *sdl.Texture
@@ -23,6 +25,9 @@ func createEnemy(renderer *sdl.Renderer, position vector2) *entity {
 
 	circleColliderComponent := createCircleCollider(enemy, enemy.position, 30)
 	enemy.addComponent(circleColliderComponent)
+
+	aiControllerComponent := createAIController(enemy, enemySpeed, enemyRoamCooldown)
+	enemy.addComponent(aiControllerComponent)
 
 	return enemy
 }
