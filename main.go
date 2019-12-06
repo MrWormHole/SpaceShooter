@@ -83,7 +83,7 @@ func main() {
 				}
 				err = entity.update()
 				if err != nil {
-					fmt.Println("Enemy Updating Error! ", err)
+					fmt.Println("Entity Updating Error! ", err)
 					quitAfterDelay()
 					return
 				}
