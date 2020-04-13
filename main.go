@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"time"
-
+	"sync"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -15,10 +15,28 @@ func quitAfterDelay() {
 	sdl.Quit()
 }
 
+func worker(r *sdl.Renderer, e *entity, wg *sync.WaitGroup) {
+	defer wg.Done()
+	err = e.draw(r)
+	if err != nil {
+		fmt.Println("Entity Drawing Error! ", err)
+		quitAfterDelay()
+		return
+	}
+	err = e.update()
+	if err != nil {
+		fmt.Println("Entity Updating Error! ", err)
+		quitAfterDelay()
+		return
+	}
+	
+}
+
 var delta float64
 
 func main() {
-
+	var wg sync.WaitGroup
+	
 	err := sdl.Init(sdl.INIT_EVERYTHING)
 	if err != nil {
 		fmt.Println("SDL Initialization Error! ", err)
@@ -75,21 +93,12 @@ func main() {
 
 		for _, entity := range entities {
 			if entity.active {
-				err = entity.draw(renderer)
-				if err != nil {
-					fmt.Println("Entity Drawing Error! ", err)
-					quitAfterDelay()
-					return
-				}
-				err = entity.update()
-				if err != nil {
-					fmt.Println("Entity Updating Error! ", err)
-					quitAfterDelay()
-					return
-				}
+				wg.Add(1)
+				go worker(&renderer, &entity, &wg)
 			}
 		}
 		delta = time.Since(frameStartTime).Seconds() * TARGET_FPS
 		renderer.Present()
+		wg.Wait()
 	}
 }
