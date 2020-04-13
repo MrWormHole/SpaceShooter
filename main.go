@@ -17,6 +17,7 @@ func quitAfterDelay() {
 
 func worker(r *sdl.Renderer, e *entity, wg *sync.WaitGroup) {
 	defer wg.Done()
+	// Now dont like error handling here at all. Not very descriptive and too repetitive for catching
 	err = e.draw(r)
 	if err != nil {
 		fmt.Println("Entity Drawing Error! ", err)
@@ -29,7 +30,6 @@ func worker(r *sdl.Renderer, e *entity, wg *sync.WaitGroup) {
 		quitAfterDelay()
 		return
 	}
-	
 }
 
 var delta float64
@@ -97,8 +97,8 @@ func main() {
 				go worker(&renderer, &entity, &wg)
 			}
 		}
+		wg.Wait()
 		delta = time.Since(frameStartTime).Seconds() * TARGET_FPS
 		renderer.Present()
-		wg.Wait()
 	}
 }
