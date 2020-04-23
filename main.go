@@ -1,47 +1,19 @@
 package main
 
 import (
-	"fmt"
 	"time"
-	"sync"
+
 	"github.com/veandco/go-sdl2/sdl"
 )
 
 const SCREEN_WIDTH, SCREEN_HEIGHT = 600, 800
 const TARGET_FPS = 60
 
-func quitAfterDelay() {
-	sdl.Delay(3000)
-	sdl.Quit()
-}
-
-func worker(r *sdl.Renderer, e *entity, wg *sync.WaitGroup) {
-	defer wg.Done()
-	// Now dont like error handling here at all. Not very descriptive and too repetitive for catching
-	err = e.draw(r)
-	if err != nil {
-		fmt.Println("Entity Drawing Error! ", err)
-		quitAfterDelay()
-		return
-	}
-	err = e.update()
-	if err != nil {
-		fmt.Println("Entity Updating Error! ", err)
-		quitAfterDelay()
-		return
-	}
-}
-
 var delta float64
 
 func main() {
-	var wg sync.WaitGroup
-	
 	err := sdl.Init(sdl.INIT_EVERYTHING)
-	if err != nil {
-		fmt.Println("SDL Initialization Error! ", err)
-		quitAfterDelay()
-	}
+	checkError("SDL Initialization Error! ", err)
 
 	window, err := sdl.CreateWindow("Space Shooter",
 		sdl.WINDOWPOS_UNDEFINED,
@@ -49,19 +21,13 @@ func main() {
 		SCREEN_WIDTH,
 		SCREEN_HEIGHT,
 		sdl.WINDOW_OPENGL)
-	if err != nil {
-		fmt.Println("Window Initialization Error! ", err)
-		quitAfterDelay()
-	}
+	checkError("Window Initialization Error! ", err)
 	defer window.Destroy()
 
 	renderer, err := sdl.CreateRenderer(window,
 		-1,
 		sdl.RENDERER_ACCELERATED)
-	if err != nil {
-		fmt.Println("Renderer Initialization Error! ", err)
-		quitAfterDelay()
-	}
+	checkError("Renderer Initialization Error! ", err)
 	defer renderer.Destroy()
 
 	for i := 0; i < 5; i++ {
@@ -93,11 +59,12 @@ func main() {
 
 		for _, entity := range entities {
 			if entity.active {
-				wg.Add(1)
-				go worker(&renderer, &entity, &wg)
+				err = entity.draw(renderer)
+				checkError("Entity Drawing Error! ", err)
+				err = entity.update()
+				checkError("Entity Updating Error! ", err)
 			}
 		}
-		wg.Wait()
 		delta = time.Since(frameStartTime).Seconds() * TARGET_FPS
 		renderer.Present()
 	}

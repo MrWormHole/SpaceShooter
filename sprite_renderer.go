@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -16,10 +14,7 @@ type spriteRenderer struct {
 func createSpriteRenderer(toAttached *entity, renderer *sdl.Renderer, filename string) *spriteRenderer {
 	texture := textureFromPNG(renderer, filename)
 	_, _, width, height, err := texture.Query()
-	if err != nil {
-		fmt.Println("Renderer Query Error! ", err)
-		quitAfterDelay()
-	}
+	checkError("Renderer Query Error! ", err)
 
 	return &spriteRenderer{
 		attachedEntity: toAttached,

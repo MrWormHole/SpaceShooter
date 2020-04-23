@@ -10,16 +10,18 @@ import (
 func textureFromPNG(renderer *sdl.Renderer, filename string) *sdl.Texture {
 	src := sdl.RWFromFile(filename, "rb")
 	image, err := img.LoadPNGRW(src)
-	if err != nil {
-		fmt.Println("Image Loading Error! ", err)
-		quitAfterDelay()
-	}
+	checkError("Image Loading Error! ", err)
 	defer image.Free()
 
 	texture, err := renderer.CreateTextureFromSurface(image)
-	if err != nil {
-		fmt.Println("Texture Loading Error! ", err)
-		quitAfterDelay()
-	}
+	checkError("Texture Loading Error! ", err)
 	return texture
+}
+
+func checkError(errorMessage string, err error) {
+	if err != nil {
+		fmt.Println(errorMessage, err)
+		sdl.Delay(3000)
+		sdl.Quit()
+	}
 }
